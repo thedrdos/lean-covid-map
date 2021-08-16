@@ -17,6 +17,11 @@ the sparse-checkout files were copied using:
 cp .git/modules/DataSet/CTP/info/sparse-checkout ./submodule_config_files/CTP_sparse-checkout
 cp .git/modules/DataSet/JH/info/sparse-checkout ./submodule_config_files/JH_sparse-checkout
 ```
+flipped:
+```
+cp ./submodule_config_files/CTP_sparse-checkout  .git/modules/DataSet/CTP/info/sparse-checkout
+cp ./submodule_config_files/JH_sparse-checkout .git/modules/DataSet/JH/info/sparse-checkout
+```
 
 
 after deleting should be able to use 
