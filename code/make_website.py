@@ -41,7 +41,8 @@ output_file.close();
 # webbrowser.open("file://"+os.path.abspath(html_file))
 
 # Post to the website
-os.system('git add -A; git commit -m "Updated using ./code/make_website.py script on: '+now+'"'+'; git push')
+# os.system('git add -A; git commit -m "Updated using ./code/make_website.py script on: '+now+'"'+'; git push')
+os.system('git add -A; git commit -m "Updated using ./code/make_website.py script on: '+now+'"')
 
 # Open a webbrowser at the remote location
 webbrowser.open("https://covid-interactive-map.netlify.com")
