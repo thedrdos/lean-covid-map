@@ -1,10 +1,17 @@
+# Change directory to where this script is
+cd "$(dirname "$0")"
+
 # List of scripts to run
 script_list=(
 "MakeDateBasedExtDataFiles.py"
 "AnimateNYT_custom.py"
+"AnimateNYT_lean_custom.py"
 "make_website.py")
 
 arg_list=(
+""
+""
+""
 ""
 ""
 ""
@@ -42,3 +49,10 @@ echo "$(date)" # Show todays date
 echo "Script completed in: "
 duration=$SECONDS
 echo "    $(($duration / 60)) minutes and $(($duration % 60)) seconds."
+
+# Copy results to actual live website
+echo "Copy results to website"
+cp -r /home/drdos_limited/lean-covid-map/site/* /var/www/resources/site/
+
+# done
+echo "Script Complete"

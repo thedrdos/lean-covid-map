@@ -42,7 +42,11 @@ output_file.close();
 
 # Post to the website
 # os.system('git add -A; git commit -m "Updated using ./code/make_website.py script on: '+now+'"'+'; git push')
-os.system('git add -A; git commit -m "Updated using ./code/make_website.py script on: '+now+'"')
+# os.system('git add -A; git commit -m "Updated using ./code/make_website.py script on: '+now+'"')
+text_file = open("latest_website_generation.log", "a")
+n = text_file.write('Updated on:'+now+'\n')
+text_file.close()
+
 
 # Open a webbrowser at the remote location
 webbrowser.open("https://covid-interactive-map.netlify.com")

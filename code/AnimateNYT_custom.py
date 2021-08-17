@@ -242,6 +242,7 @@ p_map = figure(
     sizing_mode='scale_width',
     aspect_ratio=2,
     match_aspect=True,
+    name='MainMap',
 )
 p_map.grid.grid_line_color = None
 bztool_s = BoxZoomTool(match_aspect=True)
@@ -327,7 +328,7 @@ radioGroup_play_controls.js_on_click(CustomJS(args={
              },
     code=callback_widgets))
 
-button_toggle_states_outline = Button(label='Toggle State Outlines',name='button_toggle_states_outline')
+button_toggle_states_outline = Button(label='Toggle State Outlines',name='button_toggle_states_outline',width_policy='min')
 button_toggle_states_outline.js_on_click(CustomJS(args={
             'event': 'button_toggle_states_outline',
             'ext_datafiles': ext_datafiles,
@@ -507,12 +508,15 @@ p_map.sizing_mode = 'scale_width'
 print('Making mobile output version')
 lout_mobile = layout([
                 heading,
-                [spinner_minStepTime,radioGroup_play_controls ,date_range_slider],
+                [spinner_minStepTime,button_toggle_states_outline],
+                [radioGroup_play_controls],
+                [date_range_slider],
                     #[radioGroup_level_select,
                     #button_continental_us_only],
                 p_map,
-                [button_toggle_states_outline],
-                [selectors_map]+map_range_widgets,
+                [selectors_map],
+                map_range_widgets[0],
+                map_range_widgets[1],
                 footer
                 ])
 lout_mobile.margin = (4, 20, 4, 20)  # top, right, bottom, left
