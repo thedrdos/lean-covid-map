@@ -23,7 +23,7 @@ const checkbox_group = window.Bokeh.documents[0].get_model_by_name('checkbox_gro
 const date_range_slider = window.Bokeh.documents[0].get_model_by_name('date_range_slider')
 const spinner_minStepTime = window.Bokeh.documents[0].get_model_by_name('spinner_minStepTime')
 const radioGroup_play_controls = window.Bokeh.documents[0].get_model_by_name('radioGroup_play_controls')
-const button_toggle_states_outline = window.Bokeh.documents[0].get_model_by_name('button_toggle_states_outline')
+// const button_toggle_states_outline = window.Bokeh.documents[0].get_model_by_name('button_toggle_states_outline')
 const play_controls = {
   'play': 0,
   'step': 1,
@@ -31,114 +31,6 @@ const play_controls = {
 }
 
 switch (event) {
-  // case 'graph_tap':
-  //   // Find nearest date in data and its index
-  //   var near_date = find_in_sorted_array(cb_obj.x, source_graph.data['date'])
-  //   var day = new Date(near_date['value'])
-  //   var sval = date_range_slider.value;
-  //   date_range_slider.value = [day.getTime(), sval[1]];
-  //   break;
-
-  // case 'button_continental_us_only':
-  //   if (button_continental_us_only.active) {
-  //     radioGroup_level_select.active = 1;
-  //     var data = source_map.data;
-  //     var new_data = {};
-  //     for (var key in data) {
-  //       new_data[key] = data[key];
-  //     }
-
-  //     for (var i = 0; i < new_data['location'].length; i++) {
-  //       if (continental_states.includes(new_data['location'][i])) {
-  //         // do nothing
-  //       } else {
-  //         // remove non-continental state
-  //         for (var key in new_data) {
-  //           new_data[key].splice(i, 1)
-  //         }
-  //       }
-  //     }
-  //     source_map.data = new_data;
-  //     source_map.change.emit();
-  //   }
-
-  //   break;
-
-  // case 'level_select':
-  //   switch (radioGroup_level_select.active) { // 0 world, 1 states, 2 counties
-  //     case 0:
-  //       location = 'Earth'
-  //       p_map.x_range.names = [];
-  //       p_map.reset.emit();
-  //       break;
-  //     case 1:
-  //       location = 'US';
-  //       break;
-  //     case 2:
-  //       if (ind.length > 0) {
-  //         location = mpoly.data_source.data['location'][ind[0]]
-  //         if (location.endsWith(', US')) {
-  //           p_map.x_range.names = [];
-  //           p_map.reset.emit();
-  //         } else {
-  //           location = '';
-  //         }
-  //       } else {
-  //         location = '';
-  //       }
-  //       if (location.length < 1) {
-  //         alert('First Select a State On The Map')
-  //         this.active = 1;
-  //       }
-  //       break;
-  //   }
-
-  //   if (location.length > 0) {
-  //     //console.log(location + ' selected')
-  //     if (location in ext_datafiles['location_to_mapfilename']) {
-  //       filename_map = ext_datafiles['location_to_mapfilename'][location] + '.json.gz'
-  //       //console.log(filename_map)
-  //       //console.log(ext_datafiles['rel_path'] + filename_map)
-  //       readJSONgz_fun(ext_datafiles['rel_path'] + filename_map, function() {
-  //         var data = JSON.parse(pako.inflate(this.response, {
-  //           to: 'string'
-  //         }));
-  //         //console.log('Mapfile read:')
-  //         //console.log(data)
-  //         if (data['data']['x'].length < 1) {
-  //           //Map is empty
-  //         } else {
-  //           // Map is provided
-  //           mpoly.data_source.data = data['data']
-  //           // Show the right date in the title
-  //           var day = new Date(data['data']['latestDate'][0] / 1e6);
-  //           const date_format_options = {
-  //             year: 'numeric',
-  //             month: 'short',
-  //             day: 'numeric',
-  //             timeZone: 'UTC'
-  //           };
-  //           const date_format_options2 = {
-  //             weekday: 'long',
-  //             timeZone: 'UTC'
-  //           };
-  //           // Including UTC as the timezone is important
-  //           var day_str = day.toLocaleDateString("en-US", date_format_options) + ", " + day.toLocaleDateString("en-US", date_format_options2)
-  //           p_map.title.text = day_str;
-
-  //           mpoly.data_source.change.emit()
-
-  //           if (location == 'US') {
-  //             if (button_continental_us_only.active) {
-  //               button_continental_us_only.active = false;
-  //               button_continental_us_only.active = true;
-  //             }
-  //           }
-  //         }
-  //       })
-  //     }
-  //   }
-  //   break;
 
   case 'checkbox_group':
     // Make indices for all the boxes then check every one.
@@ -185,18 +77,6 @@ switch (event) {
      
     break;
 
-  case 'button_toggle_states_outline':
-    
-    if(p_statesmap_mpoly.visible){
-      p_map.toolbar.autohide = true
-      main_colorbar.visible = false
-    }
-    else{
-      p_map.toolbar.autohide = false
-      main_colorbar.visible = true
-    }
-    p_statesmap_mpoly.visible = !p_statesmap_mpoly.visible;
-    break;
 
   case 'date_range_slider_throttled':
       var start_date = new Date(date_range_slider.value[0])

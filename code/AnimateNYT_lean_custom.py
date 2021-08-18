@@ -232,16 +232,12 @@ ________________________________________________________________________________
 """
 p_map = figure(
     title=latest_data_date.strftime('%Y-%m-%d'),
-    # x_range=minmax(DS_worlds_map.data['xc']), y_range=minmax(DS_worlds_map.data['yc']),
-    # x_range=(-1.4e7,-7.4e6),
-    # y_range=(2.88e6,6.28e6),
-    # sizing_mode='stretch_width',
-    tools="tap,pan,wheel_zoom,reset,save", active_tap='tap',
+    tools="pan,wheel_zoom,reset,save", 
     toolbar_location='below',
     x_axis_location=None, y_axis_location=None,
     x_axis_type="mercator", y_axis_type="mercator",
     sizing_mode='scale_width',
-    aspect_ratio=2,
+    aspect_ratio=1.75,
     match_aspect=True,
     name='MainMap',
 )
@@ -290,18 +286,6 @@ p_statesmap_mpoly = p_map.multi_polygons(
     name = 'p_statesmap_mpoly'
 )
 
-
-# # Add taptool to select from which state to show all the counties
-# with open(javascript_path + 'callback_map.js', 'r') as f:
-#     callback_world_map = f.read()
-# callbacktap = CustomJS(args={'ext_datafiles': ext_datafiles,
-#                              'p_graph_glyphs': p_graph_glyphs,
-#                              'p_graph': p_graph,
-#                              },
-#                        code=callback_world_map)
-# taptool = p_map.select(type=TapTool)
-# taptool.callback = callbacktap
-
 # Explicitly initialize x range
 p_map.x_range = DataRange1d()
 
@@ -324,16 +308,6 @@ radioGroup_play_controls = RadioButtonGroup(
     labels=radio_labels, active=2, width_policy='min',name='radioGroup_play_controls')
 radioGroup_play_controls.js_on_click(CustomJS(args={
             'event': 'radioGroup_play_controls',
-            'ext_datafiles': ext_datafiles,
-            'mpoly': p_map_mpoly,
-            'source_map': source_map,
-            'p_map': p_map,
-             },
-    code=callback_widgets))
-
-button_toggle_states_outline = Button(label='Toggle State Outlines',name='button_toggle_states_outline',width_policy='min')
-button_toggle_states_outline.js_on_click(CustomJS(args={
-            'event': 'button_toggle_states_outline',
             'ext_datafiles': ext_datafiles,
             'mpoly': p_map_mpoly,
             'source_map': source_map,
@@ -365,18 +339,6 @@ date_range_slider.js_on_change("value_throttled", CustomJS(args={
     code=callback_widgets
 ))
 
-# evs = [events.PressUp,events.Tap]
-# # evs = ['tap','pressup']
-# for e in evs:
-#     date_range_slider.js_on_event(e, CustomJS(args={
-#                 'event': 'date_range_slider_done',
-#                 'ext_datafiles': ext_datafiles,
-#                 'mpoly': p_map_mpoly,
-#                 'source_map': source_map,
-#                 'p_map': p_map,
-#     },
-#         code=callback_widgets
-#     ))
 
 # Minumum time between animations on play, Spinner
 spinner_minStepTime = Spinner(title="Play Speed",
@@ -387,56 +349,6 @@ spinner_minStepTime = Spinner(title="Play Speed",
     return tick.toString()+" sec"
 """),
     name='spinner_minStepTime')
-
-# Respond to taps on the graph
-# p_graph.js_on_event('tap', CustomJS(args={
-#             'event': 'graph_tap',
-#             'ext_datafiles': ext_datafiles,
-#             'mpoly': p_map_mpoly,
-#             'source_map': source_map,
-#             'p_map': p_map,
-#             'source_graph': source_graph,
-#             'p_graph': p_graph,
-# },
-#     code=callback_widgets
-# ))
-
-# Selectors for the map
-selectors_map = []
-opts = [k for k in init_data.keys() if isinstance(init_data[k], int)
-        or isinstance(init_data[k], float)]
-opts = sorted(opts)
-select = Select(title="Data For Map Coloring:",
-                value=p_map_mpoly.glyph.fill_color['field'],
-                options=opts)
-select.js_on_change("value", CustomJS(args={
-    'ext_datafiles': ext_datafiles,
-    'mpoly': p_map_mpoly,
-}, code="""
-        //console.log('select: value=' + this.value, this.toString())
-        mpoly.glyph.fill_color.field = this.value
-        mpoly.data_source.change.emit()
-    """))
-selectors_map.append(select)
-
-# Range setting for map
-map_range_widgets = []
-text_input = TextInput(value=str(color_mapper.high), title="High Color")
-text_input.js_on_change("value", CustomJS(args={
-    'ext_datafiles': ext_datafiles,
-    'color_mapper': color_mapper,
-}, code="""
-    color_mapper.high = Number(this.value)
-"""))
-map_range_widgets.append(text_input)
-text_input = TextInput(value=str(color_mapper.low), title="Low Color")
-text_input.js_on_change("value", CustomJS(args={
-    'ext_datafiles': ext_datafiles,
-    'color_mapper': color_mapper,
-}, code="""
-     color_mapper.low = Number(this.value)
-"""))
-map_range_widgets.append(text_input)
 
 # %% Make checkbox button group for settings
 LABELS = ["State Outlines", "Toolbar", "ColorBar","Play Speed"]
@@ -454,90 +366,6 @@ checkbox_group.js_on_click(CustomJS(args={
 },
     code=callback_widgets
 ))
-
-# %% Make heading for the whole thing
-"""
-# %% Make heading for the whole thing
-"""
-heading = Div(text="""
-<h1> Animated COVID-19 Data Mapped For US Counties - NYT Styled</h1>
-<p>Shows the continental US heatmapped to the previous weeks average number of COVID-19 cases per 100k people in each county.</p>
-<ul>
-	<li>Higher color number corresponds to faster spread of the virus.</li>
-    <li>On the left of each graph thera are tools to zoom/pan/reset/save.</li>
-    <li>Double tap the map to reset zoom/pan.</li>
-	<li>On Mobile: Use two finger to scroll the page.</li>
-    <li>Data last updated on: {data_update} </li>
-</ul>
-""".format(
-    data_update=pd.to_datetime(latest_data_date).strftime('%Y-%m-%d'),
-    graph_update=pd.Timestamp.now().strftime('%Y-%m-%d'),
-))
-
-footer = Div(text="""
-<h3> Sources </h3>
-<ul>
-    <li>GitHub repository for this project: <a href="https://github.com/thedrdos/covid-map"> https://github.com/thedrdos/covid-map </a>. </li>
-    <li>Produced using Python with Bokeh and other modules.</li>
-	<li>Data sourced from <a href="https://github.com/nytimes/covid-19-data"> The New York Times COVID Data GitHub Repository</a>. </li>
-</ul>
-<h4> Data Defintions: </h4>
-<ul>
-    <li>Documented at <a href="https://github.com/nytimes/covid-19-data"> The New York Times COVID Data GitHub Repository</a>. </li>
-    <li>Mimics the non-animated <a href="https://www.nytimes.com/interactive/2021/us/covid-cases.html"> interactive map from The New York Times Online</a>.</li>
-</ul>
-<h4> Errata - Map tied to possibly incorrect county data: </h4>
-<ul>
-<li> Dona Ana, New Mexico, US		 -&gt; 	Doña Ana, New Mexico, US</li>
-<li> New York, New York, US		 -&gt; 	New York City, New York, US</li>
-<li> Bronx, New York, US		 -&gt; 	Broome, New York, US</li>
-<li> Queens, New York, US		 -&gt; 	Greene, New York, US</li>
-<li> Richmond, New York, US		 -&gt; 	Rockland, New York, US</li>
-<li> Kings, New York, US		 -&gt; 	Wyoming, New York, US</li>
-<li> Williamsburg, Virginia, US		 -&gt; 	Williamsburg city, Virginia, US</li>
-<li> Emporia, Virginia, US		 -&gt; 	Emporia city, Virginia, US</li>
-<li> Salem, Virginia, US		 -&gt; 	Salem city, Virginia, US</li>
-<li> Portsmouth, Virginia, US		 -&gt; 	Portsmouth city, Virginia, US</li>
-<li> Virginia Beach, Virginia, US		 -&gt; 	Virginia Beach city, Virginia, US</li>
-<li> Danville, Virginia, US		 -&gt; 	Danville city, Virginia, US</li>
-<li> Lynchburg, Virginia, US		 -&gt; 	Lynchburg city, Virginia, US</li>
-<li> Falls Church, Virginia, US		 -&gt; 	Falls Church city, Virginia, US</li>
-<li> Bristol, Virginia, US		 -&gt; 	Bristol city, Virginia, US</li>
-<li> Hopewell, Virginia, US		 -&gt; 	Hopewell city, Virginia, US</li>
-<li> Manassas, Virginia, US		 -&gt; 	Manassas city, Virginia, US</li>
-<li> Waynesboro, Virginia, US		 -&gt; 	Waynesboro city, Virginia, US</li>
-<li> Galax, Virginia, US		 -&gt; 	Halifax, Virginia, US</li>
-<li> Martinsville, Virginia, US		 -&gt; 	Martinsville city, Virginia, US</li>
-<li> Lexington, Virginia, US		 -&gt; 	Lexington city, Virginia, US</li>
-<li> Norfolk, Virginia, US		 -&gt; 	Norfolk city, Virginia, US</li>
-<li> Alexandria, Virginia, US		 -&gt; 	Alexandria city, Virginia, US</li>
-<li> Newport News, Virginia, US		 -&gt; 	Newport News city, Virginia, US</li>
-<li> Staunton, Virginia, US		 -&gt; 	Staunton city, Virginia, US</li>
-<li> Charlottesville, Virginia, US		 -&gt; 	Charlottesville city, Virginia, US</li>
-<li> Colonial Heights, Virginia, US		 -&gt; 	Colonial Heights city, Virginia, US</li>
-<li> Petersburg, Virginia, US		 -&gt; 	Petersburg city, Virginia, US</li>
-<li> Radford, Virginia, US		 -&gt; 	Bedford, Virginia, US</li>
-<li> Hampton, Virginia, US		 -&gt; 	Hampton city, Virginia, US</li>
-<li> Poquoson, Virginia, US		 -&gt; 	Poquoson city, Virginia, US</li>
-<li> Chesapeake, Virginia, US		 -&gt; 	Chesapeake city, Virginia, US</li>
-<li> Buena Vista, Virginia, US		 -&gt; 	Buena Vista city, Virginia, US</li>
-<li> Fredericksburg, Virginia, US		 -&gt; 	Fredericksburg city, Virginia, US</li>
-<li> Suffolk, Virginia, US		 -&gt; 	Suffolk city, Virginia, US</li>
-<li> Winchester, Virginia, US		 -&gt; 	Winchester city, Virginia, US</li>
-<li> Harrisonburg, Virginia, US		 -&gt; 	Harrisonburg city, Virginia, US</li>
-<li> Manassas Park, Virginia, US		 -&gt; 	Manassas Park city, Virginia, US</li>
-<li> Covington, Virginia, US		 -&gt; 	Covington city, Virginia, US</li>
-<li> Norton, Virginia, US		 -&gt; 	Norton city, Virginia, US</li>
-</ul>
-""")
-
-data_notes = Div(text="""
-<h4> Data Defintions: </h4>
-<ul>
-    <li>Documented at <a href="https://github.com/nytimes/covid-19-data"> The New York Times COVID Data GitHub Repository</a>. </li>
-    <li>Mimics the non-animated <a href="https://www.nytimes.com/interactive/2021/us/covid-cases.html"> interactive map from The New York Times Online</a>.</li>
-</ul>
-""")
 
 # %% Combine all the graphs
 """
